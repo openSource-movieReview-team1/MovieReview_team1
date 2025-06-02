@@ -2,6 +2,19 @@ import React, { useEffect, useState } from 'react';
 import MovieCard from '../components/MovieCard';
 import { getMovies } from '../services/MovieService';
 import { getAllReviews } from '../services/ReviewService';
+function WishlistPage({ movies, wishlist }) {
+  const wishedMovies = movies.filter((movie) => wishlist.includes(movie.id));
+  return (
+    <div>
+      <h2>내 위시리스트</h2>
+      {wishedMovies.length === 0 ? (
+        <p>위시리스트에 추가된 영화가 없습니다.</p>
+      ) : (
+        wishedMovies.map((movie) => <MovieCard key={movie.id} movie={movie} />)
+      )}
+    </div>
+  );
+}
 
 // 평균 별점 가져오기
 function getAverageRating(reviews) {
@@ -18,11 +31,20 @@ function HomePage({ onSelectMovie }) {
   const [sortKey, setSortKey] = useState('year');
   const [sortOrder, setSortOrder] = useState('desc');
   const [minRating, setMinRating] = useState(0);
+  const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
     getMovies().then(setMovies);
     getAllReviews().then(setReviews);
   }, []);
+
+  const handleToggleWishlist = (movieId) => {
+    setWishlist((prev) =>
+      prev.includes(movieId)
+        ? prev.filter((id) => id !== movieId)
+        : [...prev, movieId]
+    );
+  };
 
   // 영화별 평균 별점 계산
   const moviesWithAvgRating = movies.map((movie) => {
@@ -98,6 +120,8 @@ function HomePage({ onSelectMovie }) {
             <MovieCard
               key={movie.id}
               movie={movie}
+              wishlist={wishlist}
+              onToggleWishlist={handleToggleWishlist}
               avgRating={movie.avgRating}
             />
           ))
