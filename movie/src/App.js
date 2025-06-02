@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import MovieDetailPage from './pages/MovieDetailPage';
 import { getMovies } from './services/MovieService';
 import WishlistPage from './pages/WishList';
+import './App.css';
 
 function App() {
   const [movies, setMovies] = useState([]);
