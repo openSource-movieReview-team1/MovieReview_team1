@@ -13,6 +13,14 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
+  function Header() {
+    return (
+      <header>
+        <h1>영화 리뷰 플랫폼</h1>
+      </header>
+    );
+  }
+
   useEffect(() => {
     getMovies().then(setMovies);
   }, []);
@@ -31,7 +39,7 @@ function App() {
 
   return (
     <Router>
-      <h1>영화 리뷰 플랫폼</h1>
+      <Header />
       <Routes>
         <Route
           path="/"
