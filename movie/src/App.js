@@ -52,6 +52,15 @@ function App() {
           }
         />
         <Route
+          path="/movie/:id"
+          element={
+            <MovieDetailPage
+              wishlist={wishlist}
+              onToggleWishlist={handleToggleWishlist}
+            />
+          }
+        />
+        <Route
           path="/wishlist"
           element={
             <WishlistPage
@@ -61,7 +70,6 @@ function App() {
             />
           }
         />
-        <Route path="/movie/:id" element={<MovieDetailPage />} />
       </Routes>
     </Router>
   );

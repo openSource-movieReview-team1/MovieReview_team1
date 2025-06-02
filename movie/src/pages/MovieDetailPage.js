@@ -9,8 +9,9 @@ import {
 } from '../services/ReviewService';
 import MovieCard from '../components/MovieCard'; // 추천 영화 표시용
 import '../css/Form.css';
+import '../css/MovieCard.css';
 
-function MovieDetailPage() {
+function MovieDetailPage({ wishlist = [], onToggleWishlist = () => {} }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [movie, setMovie] = useState(null);
@@ -80,13 +81,24 @@ function MovieDetailPage() {
   return (
     <div>
       <h2>{movie.title}</h2>
-      <img src={movie.poster} alt={movie.title} width={200} />
+      <img
+        className="movie-card"
+        src={movie.poster}
+        alt={movie.title}
+        width={200}
+      />
       <p>{movie.description}</p>
       <h3 style={{ marginTop: 32 }}>추천 영화</h3>
       {recommendedMovies.length > 0 ? (
         <div style={{ display: 'flex', gap: '16px', marginBottom: 24 }}>
           {recommendedMovies.map((recMovie) => (
-            <MovieCard key={recMovie.id} movie={recMovie} />
+            <MovieCard
+              key={recMovie.id}
+              movie={recMovie}
+              wishlist={wishlist} // 추가!
+              onToggleWishlist={onToggleWishlist} // 추가!
+              avgRating={recMovie.avgRating} // 필요하다면
+            />
           ))}
         </div>
       ) : (
@@ -138,7 +150,7 @@ function MovieDetailPage() {
                 <br />
                 <button
                   onClick={() => handleEditReview(r)}
-                  style={{ marginRight: 8 }}
+                  style={{ marginRight: 5 }}
                 >
                   수정
                 </button>
