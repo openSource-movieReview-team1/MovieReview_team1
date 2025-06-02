@@ -1,5 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../css/MovieCard.css';
+import '../css/Button.css';
+import '../css/Form.css';
 
 function MovieCard({ movie, avgRating }) {
   const navigate = useNavigate();

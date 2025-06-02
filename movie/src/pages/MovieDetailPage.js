@@ -8,6 +8,7 @@ import {
   updateReview,
 } from '../services/ReviewService';
 import MovieCard from '../components/MovieCard'; // 추천 영화 표시용
+import '../css/Form.css';
 
 function MovieDetailPage() {
   const { id } = useParams();

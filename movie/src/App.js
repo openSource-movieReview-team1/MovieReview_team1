@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import MovieDetailPage from './pages/MovieDetailPage';
 import { getMovies } from './services/MovieService';
 import WishlistPage from './pages/WishList';
+import './App.css';
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -11,6 +12,14 @@ function App() {
     const saved = localStorage.getItem('wishlist');
     return saved ? JSON.parse(saved) : [];
   });
+
+  function Header() {
+    return (
+      <header>
+        <h1>영화 리뷰 플랫폼</h1>
+      </header>
+    );
+  }
 
   useEffect(() => {
     getMovies().then(setMovies);
@@ -30,7 +39,7 @@ function App() {
 
   return (
     <Router>
-      <h1>영화 리뷰 플랫폼</h1>
+      <Header />
       <Routes>
         <Route
           path="/"
