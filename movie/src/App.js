@@ -1,14 +1,57 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import MovieDetailPage from './pages/MovieDetailPage';
+import { getMovies } from './services/MovieService';
+import WishlistPage from './pages/WishList';
 
 function App() {
+  const [movies, setMovies] = useState([]);
+  const [wishlist, setWishlist] = useState(() => {
+    const saved = localStorage.getItem('wishlist');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    getMovies().then(setMovies);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+  }, [wishlist]);
+
+  const handleToggleWishlist = (movieId) => {
+    setWishlist((prev) =>
+      prev.includes(movieId)
+        ? prev.filter((id) => id !== movieId)
+        : [...prev, movieId]
+    );
+  };
+
   return (
     <Router>
       <h1>영화 리뷰 플랫폼</h1>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/"
+          element={
+            <HomePage
+              movies={movies}
+              wishlist={wishlist}
+              onToggleWishlist={handleToggleWishlist}
+            />
+          }
+        />
+        <Route
+          path="/wishlist"
+          element={
+            <WishlistPage
+              movies={movies}
+              wishlist={wishlist}
+              onToggleWishlist={handleToggleWishlist}
+            />
+          }
+        />
         <Route path="/movie/:id" element={<MovieDetailPage />} />
       </Routes>
     </Router>

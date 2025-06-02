@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import MovieCard from '../components/MovieCard';
 import { getMovies } from '../services/MovieService';
 import { getAllReviews } from '../services/ReviewService';
+import { useNavigate } from 'react-router-dom';
 
 // 평균 별점 가져오기
 function getAverageRating(reviews) {
@@ -10,7 +11,7 @@ function getAverageRating(reviews) {
   return (sum / reviews.length).toFixed(1);
 }
 
-function HomePage({ onSelectMovie }) {
+function HomePage({ onSelectMovie, wishlist, onToggleWishlist }) {
   const [movies, setMovies] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [query, setQuery] = useState(''); // 검색어 상태 추가
@@ -18,6 +19,7 @@ function HomePage({ onSelectMovie }) {
   const [sortKey, setSortKey] = useState('year');
   const [sortOrder, setSortOrder] = useState('desc');
   const [minRating, setMinRating] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getMovies().then(setMovies);
@@ -67,6 +69,9 @@ function HomePage({ onSelectMovie }) {
         onChange={(e) => setQuery(e.target.value)}
         style={{ marginBottom: '16px', width: '300px', padding: '8px' }}
       />
+      <div style={{ marginBottom: '16px' }}>
+        <button onClick={() => navigate('/wishlist')}>⭐ 즐겨찾기 목록</button>
+      </div>
       {/* 정렬/필터 UI */}
       <div style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
         <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
@@ -98,6 +103,8 @@ function HomePage({ onSelectMovie }) {
             <MovieCard
               key={movie.id}
               movie={movie}
+              wishlist={wishlist}
+              onToggleWishlist={onToggleWishlist}
               avgRating={movie.avgRating}
             />
           ))
