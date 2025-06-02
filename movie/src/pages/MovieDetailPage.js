@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getMovieById } from '../services/MovieService';
 import { getReviewsByMovieId, addReview } from '../services/ReviewService';
 
-// 별점 선택 컴포넌트
+// 별점 선택 함수
 function StarRating({ value, onChange, totalStars = 5 }) {
   const [hover, setHover] = useState(0);
 
@@ -32,6 +32,13 @@ function StarRating({ value, onChange, totalStars = 5 }) {
       })}
     </div>
   );
+}
+
+// 별점 평균 표시 함수
+function getAverageRating(reviews) {
+  if (reviews.length === 0) return 0;
+  const sum = reviews.reduce((acc, cur) => acc + (cur.rating || 0), 0);
+  return (sum / reviews.length).toFixed(1); // 소수점 1자리
 }
 
 function MovieDetailPage() {
@@ -101,13 +108,19 @@ function MovieDetailPage() {
       <h2>{movie.title}</h2>
       <img src={movie.poster} alt={movie.title} width={200} />
       <p>{movie.description}</p>
+      <p>
+        평균 별점:
+        <span style={{ color: '#ffc107', fontWeight: 'bold', marginLeft: 4 }}>
+          {getAverageRating(reviews)} / 5
+        </span>
+      </p>
       <h3>리뷰</h3>
       <ul>
         {reviews.map((r) => (
           <li key={r.id} style={{ marginBottom: 8 }}>
             {editingReviewId === r.id ? (
               <div>
-                {/*수정 모드 */}
+                {/* 수정 모드 */}
                 <StarRating value={editRating} onChange={setEditRating} />
                 <textarea
                   value={editText}

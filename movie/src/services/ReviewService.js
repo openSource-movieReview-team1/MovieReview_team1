@@ -11,3 +11,8 @@ export function addReview(movieId, text, rating) {
   reviews.push(newReview);
   return Promise.resolve(newReview);
 }
+
+// 리뷰 가져오는 함수
+export function getAllReviews() {
+  return Promise.resolve(reviews);
+}
