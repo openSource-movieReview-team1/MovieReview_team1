@@ -1,38 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getMovieById } from '../services/MovieService';
+import { getMovieById, getMovies } from '../services/MovieService';
 import { getReviewsByMovieId, addReview } from '../services/ReviewService';
-
-// 별점 선택 컴포넌트
-function StarRating({ value, onChange, totalStars = 5 }) {
-  const [hover, setHover] = useState(0);
-
-  return (
-    <div style={{ display: 'flex', gap: 2, marginBottom: 8 }}>
-      {Array.from({ length: totalStars }).map((_, i) => {
-        const starValue = i + 1;
-        return (
-          <span
-            key={starValue}
-            style={{
-              cursor: 'pointer',
-              color: starValue <= (hover || value) ? '#ffc107' : '#e4e5e9',
-              fontSize: '1.5rem',
-              transition: 'color 0.2s',
-            }}
-            onClick={() => onChange(starValue)}
-            onMouseEnter={() => setHover(starValue)}
-            onMouseLeave={() => setHover(0)}
-            role="button"
-            aria-label={`${starValue}점`}
-          >
-            ★
-          </span>
-        );
-      })}
-    </div>
-  );
-}
+import MovieCard from '../components/MovieCard'; // 추천 영화 표시용
 
 function MovieDetailPage() {
   const { id } = useParams();
@@ -44,6 +14,8 @@ function MovieDetailPage() {
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editText, setEditText] = useState('');
   const [editRating, setEditRating] = useState(0);
+  const [allMovies, setAllMovies] = useState([]); // 추천 영화 관련 상태
+
   // 삭제 기능
   const handleDeleteReview = (reviewId) => {
     setReviews((prev) => prev.filter((r) => r.id !== reviewId));
@@ -79,7 +51,8 @@ function MovieDetailPage() {
 
   useEffect(() => {
     getMovieById(Number(id)).then(setMovie);
-    getReviewsByMovieId(Number(id)).then(setReviews);
+    getReviewsByMovieId(Number(id)).then(setReviews); // 모든 리뷰 데이터
+    getMovies().then(setAllMovies); // 모든 영화 데이터 가져오기
   }, [id]);
 
   const handleAddReview = () => {
@@ -94,6 +67,10 @@ function MovieDetailPage() {
     });
   };
 
+  const recommendedMovies = allMovies
+    .filter((m) => m.id !== Number(id) && m.year === movie?.year)
+    .slice(0, 5); // 최대 5개 추천
+
   if (!movie) return <div>Loading...</div>;
 
   return (
@@ -101,13 +78,29 @@ function MovieDetailPage() {
       <h2>{movie.title}</h2>
       <img src={movie.poster} alt={movie.title} width={200} />
       <p>{movie.description}</p>
+      <h3 style={{ marginTop: 32 }}>추천 영화</h3>
+      {recommendedMovies.length > 0 ? (
+        <div style={{ display: 'flex', gap: '16px', marginBottom: 24 }}>
+          {recommendedMovies.map((recMovie) => (
+            <MovieCard key={recMovie.id} movie={recMovie} />
+          ))}
+        </div>
+      ) : (
+        <p>추천할 영화가 없습니다.</p>
+      )}
+      <p>
+        평균 별점:
+        <span style={{ color: '#ffc107', fontWeight: 'bold', marginLeft: 4 }}>
+          {getAverageRating(reviews)} / 5
+        </span>
+      </p>
       <h3>리뷰</h3>
       <ul>
         {reviews.map((r) => (
           <li key={r.id} style={{ marginBottom: 8 }}>
             {editingReviewId === r.id ? (
               <div>
-                {/*수정 모드 */}
+                {/* 수정 모드 */}
                 <StarRating value={editRating} onChange={setEditRating} />
                 <textarea
                   value={editText}
@@ -169,6 +162,44 @@ function MovieDetailPage() {
       </div>
     </div>
   );
+}
+
+// 별점 선택 함수
+function StarRating({ value, onChange, totalStars = 5 }) {
+  const [hover, setHover] = useState(0);
+
+  return (
+    <div style={{ display: 'flex', gap: 2, marginBottom: 8 }}>
+      {Array.from({ length: totalStars }).map((_, i) => {
+        const starValue = i + 1;
+        return (
+          <span
+            key={starValue}
+            style={{
+              cursor: 'pointer',
+              color: starValue <= (hover || value) ? '#ffc107' : '#e4e5e9',
+              fontSize: '1.5rem',
+              transition: 'color 0.2s',
+            }}
+            onClick={() => onChange(starValue)}
+            onMouseEnter={() => setHover(starValue)}
+            onMouseLeave={() => setHover(0)}
+            role="button"
+            aria-label={`${starValue}점`}
+          >
+            ★
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+// 별점 평균 표시 함수
+function getAverageRating(reviews) {
+  if (reviews.length === 0) return 0;
+  const sum = reviews.reduce((acc, cur) => acc + (cur.rating || 0), 0);
+  return (sum / reviews.length).toFixed(1); // 소수점 1자리
 }
 
 export default MovieDetailPage;
