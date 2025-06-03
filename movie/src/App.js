@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import MovieDetailPage from './pages/MovieDetailPage';
-import { getMovies } from './services/MovieService';
-import WishlistPage from './pages/WishList';
+import HomePage from './Page/HomePage';
+import MovieDetailPage from './Page/MovieDetailPage';
+import { getMovies } from './Service/MovieService';
+import WishlistPage from './Page/WishList';
 import './App.css';
 
 function App() {
