@@ -1,17 +1,31 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import MovieDetailPage from "./pages/MovieDetailPage";
-import { getMovies } from "./services/MovieService";
-import WishlistPage from "./pages/WishList";
-import "./App.css";
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import MovieDetailPage from './pages/MovieDetailPage';
+import { getMovies } from './services/MovieService';
+import WishlistPage from './pages/WishList';
+import './App.css';
 
 function App() {
   const [movies, setMovies] = useState([]);
   const [wishlist, setWishlist] = useState(() => {
-    const saved = localStorage.getItem("wishlist");
+    const saved = localStorage.getItem('wishlist');
     return saved ? JSON.parse(saved) : [];
   });
+
+  // 스크롤에 따라 그라데이션 투명도 조절
+  const [gradientOpacity, setGradientOpacity] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const max = 100; // 0~100px 구간에서만 점점 불투명
+      const opacity = Math.min(scrollY / max, 1);
+      setGradientOpacity(opacity);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   function Header() {
     return (
@@ -26,7 +40,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
 
   const handleToggleWishlist = (movieId) => {
@@ -39,8 +53,14 @@ function App() {
 
   return (
     <>
-      {/* 넷플릭스 스타일 상단 그라데이션 */}
-      <div className="bg-gradient"></div>
+      {/* 스크롤에 따라 투명도가 변하는 넷플릭스 스타일 상단 그라데이션 */}
+      <div
+        className="bg-gradient"
+        style={{
+          opacity: gradientOpacity,
+          transition: 'opacity 0.2s'
+        }}
+      ></div>
       <Router>
         <Header />
         <Routes>
