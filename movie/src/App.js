@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import MovieDetailPage from './pages/MovieDetailPage';
-import { getMovies } from './services/MovieService';
-import WishlistPage from './pages/WishList';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import MovieDetailPage from "./pages/MovieDetailPage";
+import { getMovies } from "./services/MovieService";
+import WishlistPage from "./pages/WishList";
+import "./App.css";
 
 function App() {
   const [movies, setMovies] = useState([]);
   const [wishlist, setWishlist] = useState(() => {
-    const saved = localStorage.getItem('wishlist');
+    const saved = localStorage.getItem("wishlist");
     return saved ? JSON.parse(saved) : [];
   });
 
@@ -26,7 +26,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
   }, [wishlist]);
 
   const handleToggleWishlist = (movieId) => {
@@ -38,40 +38,44 @@ function App() {
   };
 
   return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <HomePage
-              movies={movies}
-              wishlist={wishlist}
-              onToggleWishlist={handleToggleWishlist}
-            />
-          }
-        />
-        <Route
-          path="/movie/:id"
-          element={
-            <MovieDetailPage
-              wishlist={wishlist}
-              onToggleWishlist={handleToggleWishlist}
-            />
-          }
-        />
-        <Route
-          path="/wishlist"
-          element={
-            <WishlistPage
-              movies={movies}
-              wishlist={wishlist}
-              onToggleWishlist={handleToggleWishlist}
-            />
-          }
-        />
-      </Routes>
-    </Router>
+    <>
+      {/* 넷플릭스 스타일 상단 그라데이션 */}
+      <div className="bg-gradient"></div>
+      <Router>
+        <Header />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <HomePage
+                movies={movies}
+                wishlist={wishlist}
+                onToggleWishlist={handleToggleWishlist}
+              />
+            }
+          />
+          <Route
+            path="/movie/:id"
+            element={
+              <MovieDetailPage
+                wishlist={wishlist}
+                onToggleWishlist={handleToggleWishlist}
+              />
+            }
+          />
+          <Route
+            path="/wishlist"
+            element={
+              <WishlistPage
+                movies={movies}
+                wishlist={wishlist}
+                onToggleWishlist={handleToggleWishlist}
+              />
+            }
+          />
+        </Routes>
+      </Router>
+    </>
   );
 }
 
