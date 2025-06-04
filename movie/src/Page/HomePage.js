@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import MovieCard from '../Component/MovieCard';
 import { getMovies } from '../Service/MovieService';
 import { getAllReviews } from '../Service/ReviewService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../Component/Header';
 
 // 평균 별점 가져오기
@@ -21,12 +21,23 @@ function HomePage({ onSelectMovie, wishlist, onToggleWishlist }) {
   const [sortOrder, setSortOrder] = useState('desc');
   const [minRating, setMinRating] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     getMovies().then(setMovies);
     getAllReviews().then(setReviews);
   }, []);
 
+  useEffect(() => {
+    if (location.state?.reloadReviews) {
+      reloadReviews();
+    }
+  }, [location.state]);
+  
+  const reloadReviews = () => {
+    getAllReviews().then(setReviews);
+  };
+  
   // 영화별 평균 별점 계산
   const moviesWithAvgRating = movies.map((movie) => {
     const movieReviews = reviews.filter((r) => r.movieId === movie.id);
