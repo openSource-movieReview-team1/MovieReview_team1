@@ -174,7 +174,7 @@ function MovieDetailPage({ wishlist = [], onToggleWishlist = () => {} }) {
             </div>
             <div style={{ margin: "12px 0" }}>
               <span style={{ color: "#ffc107", fontWeight: "bold", fontSize: "1.2rem" }}>
-                ★ {getAverageRating(reviews)} / 5
+                ★ {movie.rating ? ((movie.rating) / 2).toFixed(1) : "0.0"} / 5
               </span>
             </div>
             <button

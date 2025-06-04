@@ -41,7 +41,7 @@ function HomePage({ onSelectMovie, wishlist, onToggleWishlist }) {
   // 영화별 평균 별점 계산
   const moviesWithAvgRating = movies.map((movie) => {
     const movieReviews = reviews.filter((r) => r.movieId === movie.id);
-    return { ...movie, avgRating: Number(getAverageRating(movieReviews)) };
+    return { ...movie, avgRating: (Number(movie.rating || 0) / 2).toFixed(1) };
   });
 
   // 필터링 검색
