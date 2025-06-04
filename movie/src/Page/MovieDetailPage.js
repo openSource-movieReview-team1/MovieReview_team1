@@ -27,7 +27,7 @@ function MovieDetailPage({ wishlist = [], onToggleWishlist = () => {} }) {
 
   const handleEditReview = (review) => {
     setEditingReviewId(review.id);
-    setEditText(review.text);
+    setEditText(review.content);
     setEditRating(review.rating);
   };
 
@@ -52,16 +52,17 @@ function MovieDetailPage({ wishlist = [], onToggleWishlist = () => {} }) {
     getMovies().then(setAllMovies);
   }, [id]);
 
-  const handleAddReview = () => {
-    if (!reviewText.trim() || rating === 0) {
-      alert("별점과 리뷰를 모두 입력해주세요.");
-      return;
-    }
-    addReview(Number(id), reviewText, rating).then((newReview) => {
-      setReviews((prev) => [...prev, newReview]);
-      setReviewText("");
+  const handleAddReview = async () => {
+    try {
+      await addReview(movie.id, reviewText, rating);
+      const updated = await getReviewsByMovieId(Number(id));
+      setReviews(updated);
+      setReviewText('');
       setRating(0);
-    });
+    } catch (err) {
+      alert("리뷰 등록 실패");
+      console.error(err);
+    }
   };
 
   const handleDeleteReview = (reviewId) => {
@@ -228,7 +229,7 @@ function MovieDetailPage({ wishlist = [], onToggleWishlist = () => {} }) {
                     ))}
                   </span>
                   <br />
-                  {r.text}
+                  {r.content}
                   <br />
                   <button onClick={() => handleEditReview(r)} style={{ marginRight: 5 }}>수정</button>
                   <button onClick={() => handleDeleteReview(r.id)}>삭제</button>
@@ -248,7 +249,7 @@ function MovieDetailPage({ wishlist = [], onToggleWishlist = () => {} }) {
           />
           <br />
           <button onClick={handleAddReview} style={{ marginRight: "8px" }}>리뷰 등록</button>
-          <button onClick={() => navigate(-1)}>뒤로가기</button>
+          <button onClick={() => navigate('/', { state: { reloadReviews: true } })}>뒤로가기</button>
         </div>
       </section>
 
