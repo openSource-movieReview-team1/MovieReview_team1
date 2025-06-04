@@ -1,48 +1,63 @@
-// localStorage에서 리뷰 불러오기
-function loadReviews() {
-  const saved = localStorage.getItem('reviews');
-  return saved ? JSON.parse(saved) : [];
-}
+const BASE_URL = "http://localhost:5001/api/reviews";
 
-// localStorage에 리뷰 저장하기
-function saveReviews(reviews) {
-  localStorage.setItem('reviews', JSON.stringify(reviews));
-}
-
+// 특정 영화 리뷰 가져오기
 export function getReviewsByMovieId(movieId) {
-  const reviews = loadReviews();
-  return Promise.resolve(reviews.filter((r) => r.movieId === movieId));
+  return fetch(`${BASE_URL}/movie/${movieId}`)
+    .then((res) => {
+      if (!res.ok) throw new Error("리뷰 조회 실패");
+      return res.json();
+    });
 }
 
 // 리뷰 추가하기
 export function addReview(movieId, text, rating) {
-  const reviews = loadReviews();
-  const newReview = { id: Date.now(), movieId, text, rating, likes: 0 };
-  reviews.push(newReview);
-  saveReviews(reviews);
-  return Promise.resolve(newReview);
+  return fetch(BASE_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ movie_id: movieId, content: text, rating }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("리뷰 저장 실패");
+      return res.json();
+    })
+    .then((data) => {
+      return {
+        id: data.id,
+        movieId: movieId,
+        text,
+        rating,
+        likes: 0, 
+      };
+    });
 }
+
 // 리뷰 전부 가져오기
 export function getAllReviews() {
-  return Promise.resolve(loadReviews());
+  return fetch(BASE_URL)
+    .then((res) => {
+      if (!res.ok) throw new Error("전체 리뷰 조회 실패");
+      return res.json();
+    });
 }
 
 // 리뷰 삭제
 export function deleteReview(reviewId) {
-  let reviews = loadReviews();
-  reviews = reviews.filter((r) => r.id !== reviewId);
-  saveReviews(reviews);
-  return Promise.resolve();
+  return fetch(`${BASE_URL}/${reviewId}`, {
+    method: "DELETE",
+  }).then((res) => {
+    if (!res.ok) throw new Error("리뷰 삭제 실패");
+    return;
+  });
 }
 
 // 리뷰 수정
 export function updateReview(reviewId, newText, newRating) {
-  const reviews = loadReviews();
-  const idx = reviews.findIndex((r) => r.id === reviewId);
-  if (idx !== -1) {
-    reviews[idx].text = newText;
-    reviews[idx].rating = newRating;
-    saveReviews(reviews);
-  }
-  return Promise.resolve();
+  return fetch(`${BASE_URL}/${reviewId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content: newText, rating: newRating }),
+  }).then((res) => {
+    if (!res.ok) throw new Error("리뷰 수정 실패");
+    return;
+  });
 }
