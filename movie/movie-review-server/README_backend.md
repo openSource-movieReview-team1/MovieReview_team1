@@ -48,7 +48,7 @@ npm install
 3. 서버 실행:
 
 ```bash
-npm run dev
+node index.js
 ```
 
 > `.env` 파일을 사용하는 경우, 아래와 같이 환경변수를 설정합니다:
