@@ -1,5 +1,7 @@
 # movieReview
 
+[백엔드 문서 보기](movie-review-server/README_backend.md)
+
 ## 협업 시 준비 과정 
 
 ### 1. 리포지토리 클론
