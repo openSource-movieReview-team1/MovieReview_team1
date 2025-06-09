@@ -1,6 +1,6 @@
 # movieReview
 
-[백엔드 문서 보기](movie-review-server/README_backend.md)
+[백엔드 문서 보기](movie/movie-review-server/README_backend.md)
 
 ## 협업 시 준비 과정 
 
